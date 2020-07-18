@@ -12,7 +12,7 @@ export default class Timesheet extends React.Component {
             <div class="input-group">
                 <input type="text" class="form-control timestamp"
                     maxlength="4"
-                    value={entry.time}
+                    value={this.renderTime(entry.time)}
                     onChange={(event) => this.updateTime(index, event.target.value)} />
                 <input type="text" class="form-control"
                     value={entry.summary}
@@ -33,14 +33,28 @@ export default class Timesheet extends React.Component {
     }
     
     parseTime = value => parseInt(value);
-    renderTime = value => value.getHours() * 100 +
-        value.getMinutes();
+    dateTo4DigitTime = value =>
+        value.getHours() * 100 + value.getMinutes();
+    renderTime = value => value.toString().padStart(4, "0");
+    timeIsValid = value =>
+        value && !isNaN(value)
+        && 0 <= parseInt(value) <= 2359
+        && parseInt(value.slice(-2)) < 60;
     
     updateTime = (index, value) =>
-        this.updateEntry(index, "time", this.parseTime(value));
+        this.doIfTrue(
+            this.timeIsValid(value),
+            () => this.updateEntry(index, "time", this.parseTime(value))
+        );
     
     updateSummary = (index, value) =>
         this.updateEntry(index, "summary", value);
+    
+    doIfTrue(condition, func) {
+        if (condition) {
+            func();
+        }
+    }
 
     updateEntry(index, field, value) {
         let entries = this.state.entries;
@@ -56,7 +70,7 @@ export default class Timesheet extends React.Component {
                 timestamp.getFullYear(),
                 timestamp.getMonth(),
                 timestamp.getDate()),
-            time: this.renderTime(timestamp),
+            time: this.dateTo4DigitTime(timestamp),
             summary: ''
         });
         this.setState({entries});
