@@ -11,6 +11,7 @@ export default class Timesheet extends React.Component {
         const list = this.state.entries.map((entry, index) => (
             <div class="input-group">
                 <input type="text" class="form-control timestamp"
+                    autoFocus
                     maxlength="4"
                     value={this.renderTime(entry.time)}
                     onChange={(event) => this.updateTime(index, event.target.value)} />
