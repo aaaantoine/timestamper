@@ -1,4 +1,6 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 export default class Timesheet extends React.Component {
     constructor(props) {
@@ -18,6 +20,13 @@ export default class Timesheet extends React.Component {
                 <input type="text" class="form-control"
                     value={entry.summary}
                     onChange={(event) => this.updateSummary(index, event.target.value)} />
+                <div class="input-group-append">
+                    <button class="btn btn-outline-danger" type="button"
+                        title="Remove entry."
+                        onClick={(e) => this.removeEntry(index)}>
+                            <FontAwesomeIcon icon={faTrashAlt} />
+                    </button>
+                </div>
             </div>
         ));
         return (
@@ -74,6 +83,12 @@ export default class Timesheet extends React.Component {
             time: this.dateTo4DigitTime(timestamp),
             summary: ''
         });
+        this.setState({entries});
+    }
+
+    removeEntry(index) {
+        let entries = this.state.entries;
+        entries.splice(index, 1);
         this.setState({entries});
     }
 }
