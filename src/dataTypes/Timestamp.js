@@ -2,7 +2,8 @@ const dateTo4DigitTime = value =>
     value.getHours() * 100 + value.getMinutes();
 const timeIsValid = value =>
     value && !isNaN(value)
-    && 0 <= parseInt(value) <= 2359
+    && 0 <= parseInt(value)
+    && parseInt(value) <= 2359
     && parseInt(value.slice(-2)) < 60;
 
 export default class Timestamp {
