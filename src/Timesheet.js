@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faPause, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faPlus, faPause, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import Timestamp from './dataTypes/Timestamp.js';
 
 export default class Timesheet extends React.Component {
@@ -14,7 +14,15 @@ export default class Timesheet extends React.Component {
         const rowClass = entry =>
             "input-group"
             + (entry.isBreak ? " break-entry" : "");
-
+        const resumeButton = (entry, index, isLast) => isLast
+            ? ""
+            : (
+                <button class="btn btn-outline-secondary" type="button"
+                        title="Add a new entry to resume this task."
+                        onClick={e => this.resumeEntry(index)}>
+                    <FontAwesomeIcon icon={faPlay} />
+                </button>
+            );
         const list = this.state.entries.map((entry, index) => (
             <div class={rowClass(entry)}>
                 <input type="text" class="form-control timestamp"
@@ -32,6 +40,7 @@ export default class Timesheet extends React.Component {
                     onChange={(event) => this.updateSummary(index, event.target.value)}
                     onKeyDown={(event) => this.arrowKeyFocus(index, event, "summary")} />
                 <div class="input-group-append">
+                    {resumeButton(entry, index, index === this.state.entries.length - 1)}
                     <button class="btn btn-outline-secondary" type="button"
                         title="Toggle break."
                         onClick={e => this.updateIsBreak(index)}>
@@ -116,6 +125,15 @@ export default class Timesheet extends React.Component {
         this.setState({entries});
     }
 
+    resumeEntry(index) {
+        const resumeText = "Resume ";
+        const shouldprefixWithResume = text =>
+            !text.startsWith(resumeText) && !text.startsWith("Break");
+        var text = this.state.entries[index].summary;
+        text = shouldprefixWithResume(text) ? resumeText + text : text;
+        this.addEntry(text);
+    }
+
     addEntry(text) {
         if (!text) {
             text = '';
@@ -124,7 +142,7 @@ export default class Timesheet extends React.Component {
         entries.push({
             timestamp: new Timestamp(new Date()),
             summary: text,
-            isBreak: text === "Break",
+            isBreak: text.startsWith("Break"),
 
             timestampRef: React.createRef(),
             summaryRef: React.createRef()
