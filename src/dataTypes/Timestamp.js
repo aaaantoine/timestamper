@@ -11,13 +11,29 @@ export default class Timestamp {
      * @param {Date} timestamp 
      */
     constructor(timestamp) {
-        this.date = new Date(
-            timestamp.getFullYear(),
-            timestamp.getMonth(),
-            timestamp.getDate());
-        this.time = dateTo4DigitTime(timestamp);
-        this.sorttime = this.time;
-        this.isMidEntry = false;
+        if (timestamp instanceof Date) {
+            this.date = new Date(
+                timestamp.getFullYear(),
+                timestamp.getMonth(),
+                timestamp.getDate());
+            this.time = dateTo4DigitTime(timestamp);
+            this.sorttime = this.time;
+            this.isMidEntry = false;
+        }
+        else {
+            this.date = timestamp.date;
+            this.time = timestamp.time;
+            this.sorttime = timestamp.sorttime;
+            this.setIsMidEntry(false);
+        }
+    }
+
+    toObject = () => {
+        return {
+            date: this.date,
+            time: this.time,
+            sorttime: this.sorttime
+        };
     }
 
     startEntry = () => this.setIsMidEntry(true);

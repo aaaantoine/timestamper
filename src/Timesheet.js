@@ -7,7 +7,7 @@ export default class Timesheet extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            entries: []
+            entries: this.loadEntries()
         };
     }
     render() {
@@ -125,7 +125,7 @@ export default class Timesheet extends React.Component {
         entries[index][field] = valueFunc(entries[index]);
         entries.sort((a, b) =>
             a.timestamp.sorttime - b.timestamp.sorttime);
-        this.setState({entries});
+        this.setStateWrapper({entries});
     }
 
     resumeEntry(index) {
@@ -141,20 +141,56 @@ export default class Timesheet extends React.Component {
             text = '';
         }
         let entries = this.state.entries;
-        entries.push({
+        entries.push(this.createEntry({
             timestamp: new Timestamp(new Date()),
             summary: text,
-            isBreak: !!isBreak,
+            isBreak: !!isBreak
+        }));
+        this.setStateWrapper({entries});
+    }
+
+    createEntry(props) {
+        return {
+            timestamp: props.timestamp,
+            summary: props.summary,
+            isBreak: !!props.isBreak,
 
             timestampRef: React.createRef(),
             summaryRef: React.createRef()
-        });
-        this.setState({entries});
+        };
     }
 
     removeEntry(index) {
         let entries = this.state.entries;
         entries.splice(index, 1);
-        this.setState({entries});
+        this.setStateWrapper({entries});
+    }
+
+    setStateWrapper(state) {
+        this.setState(state);
+        this.saveEntries(this.state.entries);
+    }
+
+    saveEntries(entries) {
+        const savedEntries = entries.map(entry => {
+            return {
+                timestamp: entry.timestamp.toObject(),
+                summary: entry.summary,
+                isBreak: entry.isBreak
+            };
+        });
+        localStorage.setItem("entries", JSON.stringify(savedEntries));
+    }
+
+    loadEntries() {
+        let entries = JSON.parse(localStorage.getItem("entries"));
+        if (entries) {
+            // re-cast timestamps according to class
+            for(let i = 0; i < entries.length; i++) {
+                entries[i].timestamp = new Timestamp(entries[i].timestamp);
+                entries[i] = this.createEntry(entries[i]);
+            }
+        }
+        return entries || [];
     }
 }
