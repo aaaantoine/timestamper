@@ -17,7 +17,9 @@ export default class Timesheet extends React.Component {
                     autoFocus
                     maxlength="4"
                     value={entry.timestamp.renderTime()}
-                    onChange={(event) => this.updateTime(index, event.target.value)} />
+                    onChange={(event) => this.updateTime(index, event.target.value)}
+                    onFocus={() => this.startTimeEntry(index)}
+                    onBlur={() => this.completeTimeEntry(index)} />
                 <input type="text" class="form-control"
                     value={entry.summary}
                     onChange={(event) => this.updateSummary(index, event.target.value)} />
@@ -43,12 +45,21 @@ export default class Timesheet extends React.Component {
         );
     }
     
+    startTimeEntry = (index) =>
+        this.updateTimeProp(index, x => x.startEntry());
+    
+    completeTimeEntry = (index) =>
+        this.updateTimeProp(index, x => x.completeEntry());
+    
     updateTime = (index, value) =>
+        this.updateTimeProp(index, x => x.setTime(value));
+    
+    updateTimeProp = (index, func) =>
         this.updateEntry(
             index,
             "timestamp",
-             x => x.timestamp.setTime(value));
-    
+             x => func(x.timestamp));
+
     updateSummary = (index, value) =>
         this.updateEntry(index, "summary", value);
     
