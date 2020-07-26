@@ -7,3 +7,7 @@
 .timestamp {
   max-width: 4em;
 }
+
+.break-entry, .break-entry input {
+  background-color: #dddddd;
+}

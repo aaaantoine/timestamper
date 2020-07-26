@@ -11,8 +11,12 @@ export default class Timesheet extends React.Component {
         };
     }
     render() {
+        const rowClass = entry =>
+            "input-group"
+            + (entry.isBreak ? " break-entry" : "");
+
         const list = this.state.entries.map((entry, index) => (
-            <div class="input-group">
+            <div class={rowClass(entry)}>
                 <input type="text" class="form-control timestamp"
                     ref={entry.timestampRef}
                     autoFocus
@@ -28,6 +32,11 @@ export default class Timesheet extends React.Component {
                     onChange={(event) => this.updateSummary(index, event.target.value)}
                     onKeyDown={(event) => this.arrowKeyFocus(index, event, "summary")} />
                 <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button"
+                        title="Toggle break."
+                        onClick={e => this.updateIsBreak(index)}>
+                            <FontAwesomeIcon icon={faPause} />
+                        </button>
                     <button class="btn btn-outline-danger" type="button"
                         title="Remove entry."
                         onClick={(e) => this.removeEntry(index)}>
@@ -92,6 +101,9 @@ export default class Timesheet extends React.Component {
     updateSummary = (index, value) =>
         this.updateEntry(index, "summary", value);
     
+    updateIsBreak = (index) =>
+        this.updateEntry(index, "isBreak", x => !x.isBreak);
+
     updateEntry(index, field, valueFunc) {
         if (typeof(valueFunc) !== "function") {
             const value = valueFunc;
@@ -112,6 +124,7 @@ export default class Timesheet extends React.Component {
         entries.push({
             timestamp: new Timestamp(new Date()),
             summary: text,
+            isBreak: text === "Break",
 
             timestampRef: React.createRef(),
             summaryRef: React.createRef()
