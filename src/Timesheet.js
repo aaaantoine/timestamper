@@ -79,9 +79,12 @@ export default class Timesheet extends React.Component {
             if (index <= 0) return;
             newIndex -= 1;
         }
-        else if (event.keyCode === 40) { // down
+        else if (event.keyCode === 40 || event.keyCode === 13) { // down or enter
             if (index >= this.state.entries.length - 1) {
-                this.addEntry();
+                // only add if the last entry has text
+                if (this.state.entries[index].summary.trim() !== "") {
+                    this.addEntry();
+                }
                 return;
             }
             newIndex += 1;
