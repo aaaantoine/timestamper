@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faPause, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import Timestamp from './dataTypes/Timestamp.js';
 
 export default class Timesheet extends React.Component {
@@ -39,10 +39,16 @@ export default class Timesheet extends React.Component {
         return (
             <div class="container">
                 {list}
-                <div class="input-group mt-2">
-                    <button class="btn btn-secondary" type='button'
+                <div class="mt-2">
+                    <button class="btn btn-primary" type='button'
+                        title="Add an entry."
                         onClick={() => this.addEntry()}>
-                            Add
+                        <FontAwesomeIcon icon={faPlus} />
+                    </button> 
+                    <button class="btn btn-secondary ml-1" type="button"
+                        title="Take a break."
+                        onClick={(e) => this.addEntry("Break")}>
+                        <FontAwesomeIcon icon={faPause} />
                     </button>
                 </div>
             </div>
@@ -98,11 +104,14 @@ export default class Timesheet extends React.Component {
         this.setState({entries});
     }
 
-    addEntry() {
+    addEntry(text) {
+        if (!text) {
+            text = '';
+        }
         let entries = this.state.entries;
         entries.push({
             timestamp: new Timestamp(new Date()),
-            summary: '',
+            summary: text,
 
             timestampRef: React.createRef(),
             summaryRef: React.createRef()
