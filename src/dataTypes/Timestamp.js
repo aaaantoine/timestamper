@@ -4,7 +4,6 @@ const timeIsValid = value =>
     value && !isNaN(value)
     && 0 <= parseInt(value) <= 2359
     && parseInt(value.slice(-2)) < 60;
-const parseTime = value => parseInt(value);
 
 export default class Timestamp {
     /**
@@ -30,14 +29,21 @@ export default class Timestamp {
     setIsMidEntry(value) {
         this.isMidEntry = value;
         if (!value) {
-            this.sorttime = this.time;
+            if (timeIsValid(this.time.toString())) {
+                this.sorttime = this.time;
+            } else {
+                this.time = this.sorttime;
+            }
         }
         return this;
     }
 
     setTime(value) {
-        if (timeIsValid(value)) {
-            this.time = parseTime(value);
+        if (!value) {
+            value = 0;
+        }
+        if (!isNaN(value)) {
+            this.time = parseInt(value);
         }
         return this;
     }
