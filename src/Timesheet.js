@@ -70,6 +70,8 @@ export default class Timesheet extends React.Component {
         }
         let entries = this.state.entries;
         entries[index][field] = valueFunc(entries[index]);
+        entries.sort((a, b) =>
+            a.timestamp.sorttime - b.timestamp.sorttime);
         this.setState({entries});
     }
 

@@ -16,6 +16,7 @@ export default class Timestamp {
             timestamp.getMonth(),
             timestamp.getDate());
         this.time = dateTo4DigitTime(timestamp);
+        this.sorttime = this.time;
         this.isMidEntry = false;
     }
 
@@ -28,13 +29,15 @@ export default class Timestamp {
 
     setIsMidEntry(value) {
         this.isMidEntry = value;
+        if (!value) {
+            this.sorttime = this.time;
+        }
         return this;
     }
 
     setTime(value) {
         if (timeIsValid(value)) {
             this.time = parseTime(value);
-            this.isMidEntry = true;
         }
         return this;
     }
