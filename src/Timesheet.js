@@ -65,7 +65,7 @@ export default class Timesheet extends React.Component {
                     </button> 
                     <button class="btn btn-secondary ml-1" type="button"
                         title="Take a break."
-                        onClick={(e) => this.addEntry("Break")}>
+                        onClick={(e) => this.addEntry("Break", true)}>
                         <FontAwesomeIcon icon={faPause} />
                     </button>
                 </div>
@@ -127,14 +127,13 @@ export default class Timesheet extends React.Component {
 
     resumeEntry(index) {
         const resumeText = "Resume ";
-        const shouldprefixWithResume = text =>
-            !text.startsWith(resumeText) && !text.startsWith("Break");
-        var text = this.state.entries[index].summary;
-        text = shouldprefixWithResume(text) ? resumeText + text : text;
-        this.addEntry(text);
+        var sourceEntry = this.state.entries[index];
+        var text = sourceEntry.summary;
+        text = !text.startsWith(resumeText) ? resumeText + text : text;
+        this.addEntry(text, sourceEntry.isBreak);
     }
 
-    addEntry(text) {
+    addEntry(text, isBreak) {
         if (!text) {
             text = '';
         }
@@ -142,7 +141,7 @@ export default class Timesheet extends React.Component {
         entries.push({
             timestamp: new Timestamp(new Date()),
             summary: text,
-            isBreak: text.startsWith("Break"),
+            isBreak: !!isBreak,
 
             timestampRef: React.createRef(),
             summaryRef: React.createRef()
