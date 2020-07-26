@@ -1,6 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import Timestamp from './dataTypes/Timestamp.js';
 
 export default class Timesheet extends React.Component {
     constructor(props) {
@@ -15,7 +16,7 @@ export default class Timesheet extends React.Component {
                 <input type="text" class="form-control timestamp"
                     autoFocus
                     maxlength="4"
-                    value={this.renderTime(entry.time)}
+                    value={entry.timestamp.renderTime()}
                     onChange={(event) => this.updateTime(index, event.target.value)} />
                 <input type="text" class="form-control"
                     value={entry.summary}
@@ -42,45 +43,29 @@ export default class Timesheet extends React.Component {
         );
     }
     
-    parseTime = value => parseInt(value);
-    dateTo4DigitTime = value =>
-        value.getHours() * 100 + value.getMinutes();
-    renderTime = value => value.toString().padStart(4, "0");
-    timeIsValid = value =>
-        value && !isNaN(value)
-        && 0 <= parseInt(value) <= 2359
-        && parseInt(value.slice(-2)) < 60;
-    
     updateTime = (index, value) =>
-        this.doIfTrue(
-            this.timeIsValid(value),
-            () => this.updateEntry(index, "time", this.parseTime(value))
-        );
+        this.updateEntry(
+            index,
+            "timestamp",
+             x => x.timestamp.setTime(value));
     
     updateSummary = (index, value) =>
         this.updateEntry(index, "summary", value);
     
-    doIfTrue(condition, func) {
-        if (condition) {
-            func();
+    updateEntry(index, field, valueFunc) {
+        if (typeof(valueFunc) !== "function") {
+            const value = valueFunc;
+            valueFunc = x => value;
         }
-    }
-
-    updateEntry(index, field, value) {
         let entries = this.state.entries;
-        entries[index][field] = value;
+        entries[index][field] = valueFunc(entries[index]);
         this.setState({entries});
     }
 
     addEntry() {
         let entries = this.state.entries;
-        let timestamp = new Date();
         entries.push({
-            date: new Date(
-                timestamp.getFullYear(),
-                timestamp.getMonth(),
-                timestamp.getDate()),
-            time: this.dateTo4DigitTime(timestamp),
+            timestamp: new Timestamp(new Date()),
             summary: ''
         });
         this.setState({entries});
