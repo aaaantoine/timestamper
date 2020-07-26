@@ -14,15 +14,19 @@ export default class Timesheet extends React.Component {
         const list = this.state.entries.map((entry, index) => (
             <div class="input-group">
                 <input type="text" class="form-control timestamp"
+                    ref={entry.timestampRef}
                     autoFocus
                     maxlength="4"
                     value={entry.timestamp.renderTime()}
                     onChange={(event) => this.updateTime(index, event.target.value)}
                     onFocus={() => this.startTimeEntry(index)}
-                    onBlur={() => this.completeTimeEntry(index)} />
+                    onBlur={() => this.completeTimeEntry(index)}
+                    onKeyDown={(event) => this.arrowKeyFocus(index, event, "timestamp")} />
                 <input type="text" class="form-control"
+                    ref={entry.summaryRef}
                     value={entry.summary}
-                    onChange={(event) => this.updateSummary(index, event.target.value)} />
+                    onChange={(event) => this.updateSummary(index, event.target.value)}
+                    onKeyDown={(event) => this.arrowKeyFocus(index, event, "summary")} />
                 <div class="input-group-append">
                     <button class="btn btn-outline-danger" type="button"
                         title="Remove entry."
@@ -45,6 +49,22 @@ export default class Timesheet extends React.Component {
         );
     }
     
+    arrowKeyFocus(index, event, field) {
+        let newIndex = index;
+        if (event.keyCode === 38) { // up
+            if (index <= 0) return;
+            newIndex -= 1;
+        }
+        else if (event.keyCode === 40) { // down
+            if (index >= this.state.entries.length - 1) return;
+            newIndex += 1;
+        }
+        else {
+            return;
+        }
+        this.state.entries[newIndex][field + "Ref"].current.focus();
+    }
+
     startTimeEntry = (index) =>
         this.updateTimeProp(index, x => x.startEntry());
     
@@ -79,7 +99,10 @@ export default class Timesheet extends React.Component {
         let entries = this.state.entries;
         entries.push({
             timestamp: new Timestamp(new Date()),
-            summary: ''
+            summary: '',
+
+            timestampRef: React.createRef(),
+            summaryRef: React.createRef()
         });
         this.setState({entries});
     }
