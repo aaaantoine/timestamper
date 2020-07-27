@@ -1,6 +1,8 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileAlt, faPlay, faPlus, faPause, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 import Timestamp from './dataTypes/Timestamp.js';
 
 export default class Timesheet extends React.Component {
@@ -90,6 +92,11 @@ export default class Timesheet extends React.Component {
                         title="Toggle Copy/Report Mode"
                         onClick={() => this.toggleCopyMode()}>
                         <FontAwesomeIcon icon={faFileAlt} />
+                    </button>
+                    <button class="btn btn-danger ml-1" type="button"
+                        title="Clear all entries."
+                        onClick={() => this.clearAllEntries()}>
+                        <FontAwesomeIcon icon={faTrashAlt} />
                     </button>
                 </div>
             </div>
@@ -192,6 +199,25 @@ export default class Timesheet extends React.Component {
     toggleCopyMode() {
         let isCopyMode = !this.state.isCopyMode;
         this.setState({isCopyMode});
+    }
+
+    clearAllEntries() {
+        confirmAlert({
+            title: "Clear all entries",
+            message: "Are you sure?",
+            buttons: [
+                {
+                    label: "Yes, Clear",
+                    onClick: () => {
+                        const entries = [];
+                        this.setState({entries});
+                    }
+                },
+                {
+                    label: "No, Cancel"
+                }
+            ]
+        });
     }
 
     setStateWrapper(state) {
