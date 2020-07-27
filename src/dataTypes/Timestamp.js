@@ -24,7 +24,7 @@ export default class Timestamp {
             this.isMidEntry = false;
         }
         else {
-            this.date = timestamp.date;
+            this.date = new Date(timestamp.date);
             this.time = timestamp.time;
             this.sorttime = timestamp.sorttime;
             this.setIsMidEntry(false);
@@ -37,6 +37,13 @@ export default class Timestamp {
             time: this.time,
             sorttime: this.sorttime
         };
+    }
+
+    getSortable() {
+        const timestring = pad(this.sorttime);
+        const hours = parseInt(timestring.slice(0, 2));
+        const minutes = parseInt(timestring.slice(2)) + (hours * 60);
+        return new Date(this.date.getTime() + minutes * 60000);
     }
 
     startEntry = () => this.setIsMidEntry(true);
