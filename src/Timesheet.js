@@ -44,7 +44,7 @@ export default class Timesheet extends React.Component {
                     onKeyDown={(event) => this.arrowKeyFocus(index, event, "summary")} />
                 <div class="input-group-append">
                     {resumeButton(entry, index, index === this.state.entries.length - 1)}
-                    <button class="btn btn-outline-secondary" type="button"
+                    <button class={"btn " + (entry.isBreak ? "btn-secondary" : "btn-outline-secondary")} type="button"
                         title="Toggle break."
                         onClick={e => this.updateIsBreak(index)}>
                             <FontAwesomeIcon icon={faPause} />
