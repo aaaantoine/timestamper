@@ -1,13 +1,14 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faPlus, faPause, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faFileAlt, faPlay, faPlus, faPause, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import Timestamp from './dataTypes/Timestamp.js';
 
 export default class Timesheet extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            entries: this.loadEntries()
+            entries: this.loadEntries(),
+            isCopyMode: false,
         };
     }
     render() {
@@ -23,7 +24,7 @@ export default class Timesheet extends React.Component {
                     <FontAwesomeIcon icon={faPlay} />
                 </button>
             );
-        const list = this.state.entries.map((entry, index) => (
+        const editModeMapping = (entry, index) => (
             <div class={rowClass(entry)}>
                 <input type="text" class="form-control timestamp"
                     ref={entry.timestampRef}
@@ -53,20 +54,42 @@ export default class Timesheet extends React.Component {
                     </button>
                 </div>
             </div>
-        ));
+        );
+        const copyModeMapping = (entry) => (
+            <div class={"row" + (entry.isBreak ? " break-entry" : "")}>
+                <div class="col-xs-1 m-2">
+                    {entry.timestamp.renderTime({includeColon: true})}
+                </div>
+                <div class="col m-2">
+                    {entry.summary}
+                </div>
+            </div>
+        );
+        const list = this.state.entries.map(
+            this.state.isCopyMode ? copyModeMapping : editModeMapping);
+        const copyModeClass = "btn ml-1 " + (this.state.isCopyMode
+             ? "btn-secondary"
+             : "btn-outline-secondary");
         return (
             <div class="container">
                 {list}
                 <div class="mt-2">
                     <button class="btn btn-primary" type='button'
                         title="Add an entry."
-                        onClick={() => this.addEntry()}>
+                        onClick={() => this.addEntry()}
+                        disabled={this.state.isCopyMode}>
                         <FontAwesomeIcon icon={faPlus} />
                     </button> 
                     <button class="btn btn-secondary ml-1" type="button"
                         title="Take a break."
-                        onClick={(e) => this.addEntry("Break", true)}>
+                        onClick={(e) => this.addEntry("Break", true)}
+                        disabled={this.state.isCopyMode}>
                         <FontAwesomeIcon icon={faPause} />
+                    </button>
+                    <button class={copyModeClass} type="button"
+                        title="Toggle Copy/Report Mode"
+                        onClick={() => this.toggleCopyMode()}>
+                        <FontAwesomeIcon icon={faFileAlt} />
                     </button>
                 </div>
             </div>
@@ -164,6 +187,11 @@ export default class Timesheet extends React.Component {
         let entries = this.state.entries;
         entries.splice(index, 1);
         this.setStateWrapper({entries});
+    }
+
+    toggleCopyMode() {
+        let isCopyMode = !this.state.isCopyMode;
+        this.setState({isCopyMode});
     }
 
     setStateWrapper(state) {

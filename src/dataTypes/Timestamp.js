@@ -1,5 +1,8 @@
 const dateTo4DigitTime = value =>
     value.getHours() * 100 + value.getMinutes();
+const insertColon = (value) =>
+    value.slice(0, 2) + ":" + value.slice(2);
+const pad = (value) => value.toString().padStart(4, "0");
 const timeIsValid = value =>
     value && !isNaN(value)
     && 0 <= parseInt(value)
@@ -39,9 +42,11 @@ export default class Timestamp {
     startEntry = () => this.setIsMidEntry(true);
     completeEntry = () => this.setIsMidEntry(false);
 
-    renderTime = () => this.isMidEntry
+    renderTime = (options) => this.isMidEntry
         ? this.time.toString()
-        : this.time.toString().padStart(4, "0");
+        : options && options.includeColon
+            ? insertColon(pad(this.time))
+            : pad(this.time);
 
     setIsMidEntry(value) {
         this.isMidEntry = value;
