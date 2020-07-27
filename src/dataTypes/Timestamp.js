@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 const dateTo4DigitTime = value =>
     value.getHours() * 100 + value.getMinutes();
 const insertColon = (value) =>
@@ -15,16 +17,16 @@ export default class Timestamp {
      */
     constructor(timestamp) {
         if (timestamp instanceof Date) {
-            this.date = new Date(
+            this.date = moment(new Date(
                 timestamp.getFullYear(),
                 timestamp.getMonth(),
-                timestamp.getDate());
+                timestamp.getDate()));
             this.time = dateTo4DigitTime(timestamp);
             this.sorttime = this.time;
             this.isMidEntry = false;
         }
         else {
-            this.date = new Date(timestamp.date);
+            this.date = moment(new Date(timestamp.date));
             this.time = timestamp.time;
             this.sorttime = timestamp.sorttime;
             this.setIsMidEntry(false);
@@ -43,7 +45,7 @@ export default class Timestamp {
         const timestring = pad(this.sorttime);
         const hours = parseInt(timestring.slice(0, 2));
         const minutes = parseInt(timestring.slice(2)) + (hours * 60);
-        return new Date(this.date.getTime() + minutes * 60000);
+        return moment(this.date).add(minutes, 'm');
     }
 
     startEntry = () => this.setIsMidEntry(true);

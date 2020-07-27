@@ -26,46 +26,60 @@ export default class Timesheet extends React.Component {
                     <FontAwesomeIcon icon={faPlay} />
                 </button>
             );
+        const dateHeader = (entry, index, className) =>
+            index === 0 || !this.state.entries[index - 1].timestamp.date.isSame(entry.timestamp.date)
+                ? (
+                <div class={"border-bottom mt-4 mb-2 " + className}>
+                    <small>{entry.timestamp.date.format("YYYY-MM-DD dddd")}</small>
+                </div>
+                )
+                : "";
         const editModeMapping = (entry, index) => (
-            <div class={rowClass(entry)}>
-                <input type="text" class="form-control timestamp"
-                    ref={entry.timestampRef}
-                    autoFocus
-                    maxlength="4"
-                    value={entry.timestamp.renderTime()}
-                    onChange={(event) => this.updateTime(index, event.target.value)}
-                    onFocus={() => this.startTimeEntry(index)}
-                    onBlur={() => this.completeTimeEntry(index)}
-                    onKeyDown={(event) => this.arrowKeyFocus(index, event, "timestamp")} />
-                <input type="text" class="form-control"
-                    ref={entry.summaryRef}
-                    value={entry.summary}
-                    onChange={(event) => this.updateSummary(index, event.target.value)}
-                    onKeyDown={(event) => this.arrowKeyFocus(index, event, "summary")} />
-                <div class="input-group-append">
-                    {resumeButton(entry, index, index === this.state.entries.length - 1)}
-                    <button class={"btn " + (entry.isBreak ? "btn-secondary" : "btn-outline-secondary")} type="button"
-                        title="Toggle break."
-                        onClick={e => this.updateIsBreak(index)}>
-                            <FontAwesomeIcon icon={faPause} />
+            <React.Fragment>
+                {dateHeader(entry, index)}
+                <div class={rowClass(entry)}>
+                    <input type="text" class="form-control timestamp"
+                        ref={entry.timestampRef}
+                        autoFocus
+                        maxlength="4"
+                        value={entry.timestamp.renderTime()}
+                        onChange={(event) => this.updateTime(index, event.target.value)}
+                        onFocus={() => this.startTimeEntry(index)}
+                        onBlur={() => this.completeTimeEntry(index)}
+                        onKeyDown={(event) => this.arrowKeyFocus(index, event, "timestamp")} />
+                    <input type="text" class="form-control"
+                        ref={entry.summaryRef}
+                        value={entry.summary}
+                        onChange={(event) => this.updateSummary(index, event.target.value)}
+                        onKeyDown={(event) => this.arrowKeyFocus(index, event, "summary")} />
+                    <div class="input-group-append">
+                        {resumeButton(entry, index, index === this.state.entries.length - 1)}
+                        <button class={"btn " + (entry.isBreak ? "btn-secondary" : "btn-outline-secondary")} type="button"
+                            title="Toggle break."
+                            onClick={e => this.updateIsBreak(index)}>
+                                <FontAwesomeIcon icon={faPause} />
+                            </button>
+                        <button class="btn btn-outline-danger" type="button"
+                            title="Remove entry."
+                            onClick={(e) => this.removeEntry(index)}>
+                                <FontAwesomeIcon icon={faTrashAlt} />
                         </button>
-                    <button class="btn btn-outline-danger" type="button"
-                        title="Remove entry."
-                        onClick={(e) => this.removeEntry(index)}>
-                            <FontAwesomeIcon icon={faTrashAlt} />
-                    </button>
+                    </div>
                 </div>
-            </div>
+            </React.Fragment>
         );
-        const copyModeMapping = (entry) => (
-            <div class={"row" + (entry.isBreak ? " break-entry" : "")}>
-                <div class="col-xs-1 m-2">
-                    {entry.timestamp.renderTime({includeColon: true})}
+        const copyModeMapping = (entry, index) => (
+            <React.Fragment>
+                {dateHeader(entry, index, "row")}    
+                <div class={"row" + (entry.isBreak ? " break-entry" : "")}>
+                    <div class="col-xs-1 m-2">
+                        {entry.timestamp.renderTime({includeColon: true})}
+                    </div>
+                    <div class="col m-2">
+                        {entry.summary}
+                    </div>
                 </div>
-                <div class="col m-2">
-                    {entry.summary}
-                </div>
-            </div>
+            </React.Fragment>
         );
         const list = this.state.entries.map(
             this.state.isCopyMode ? copyModeMapping : editModeMapping);
