@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/timestamper/static/css/main.3bf39e44.chunk.css",
+    "main.js": "/timestamper/static/js/main.7f34c427.chunk.js",
+    "main.js.map": "/timestamper/static/js/main.7f34c427.chunk.js.map",
+    "runtime-main.js": "/timestamper/static/js/runtime-main.569f3f89.js",
+    "runtime-main.js.map": "/timestamper/static/js/runtime-main.569f3f89.js.map",
+    "static/css/2.627926fe.chunk.css": "/timestamper/static/css/2.627926fe.chunk.css",
+    "static/js/2.cad2acc5.chunk.js": "/timestamper/static/js/2.cad2acc5.chunk.js",
+    "static/js/2.cad2acc5.chunk.js.map": "/timestamper/static/js/2.cad2acc5.chunk.js.map",
+    "index.html": "/timestamper/index.html",
+    "precache-manifest.98c86ed7a049f849bdb0f38322042369.js": "/timestamper/precache-manifest.98c86ed7a049f849bdb0f38322042369.js",
+    "service-worker.js": "/timestamper/service-worker.js",
+    "static/css/2.627926fe.chunk.css.map": "/timestamper/static/css/2.627926fe.chunk.css.map",
+    "static/css/main.3bf39e44.chunk.css.map": "/timestamper/static/css/main.3bf39e44.chunk.css.map",
+    "static/js/2.cad2acc5.chunk.js.LICENSE.txt": "/timestamper/static/js/2.cad2acc5.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.569f3f89.js",
+    "static/css/2.627926fe.chunk.css",
+    "static/js/2.cad2acc5.chunk.js",
+    "static/css/main.3bf39e44.chunk.css",
+    "static/js/main.7f34c427.chunk.js"
+  ]
+}
