@@ -71,13 +71,14 @@ export default class Timesheet extends React.Component {
         const copyModeMapping = (entry, index) => (
             <React.Fragment>
                 {dateHeader(entry, index, "row")}    
-                <div class={"row" + (entry.isBreak ? " break-entry" : "")}>
-                    <div class="col-xs-1 m-2">
+                <div class={"row p-1" + (entry.isBreak ? " break-entry" : "")}>
+                    <span class="col-xs-1">
                         {entry.timestamp.renderTime({includeColon: true})}
-                    </div>
-                    <div class="col m-2">
+                    </span>
+                    <span> </span>
+                    <span class="col">
                         {entry.summary}
-                    </div>
+                    </span>
                 </div>
             </React.Fragment>
         );
