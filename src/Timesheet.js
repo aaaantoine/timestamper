@@ -33,12 +33,8 @@ export default class Timesheet extends React.Component {
                 </button>
             );
         const timeElapsedText = (entry, index) =>
-            index < this.state.entries.length - 1
-                ? "("
-                    + formatTimespan(timeDiff(
-                        entry.timestamp,
-                        this.state.entries[index + 1].timestamp))
-                    + ")"
+            entry.elapsed
+                ? "(" + formatTimespan(entry.elapsed) + ")"
                 : "";
         const dateHeader = (entry, index, className) =>
             index === 0 || !this.state.entries[index - 1].timestamp.date.isSame(entry.timestamp.date)
@@ -254,8 +250,20 @@ export default class Timesheet extends React.Component {
     }
 
     setStateWrapper(state) {
+        this.calculateTimeElapsed(state);
         this.setState(state);
         this.saveEntries(this.state.entries);
+    }
+
+    calculateTimeElapsed(state) {
+        for (let i = 0; i < state.entries.length; i++) {
+            const entry = state.entries[i];
+            entry.elapsed = i + 1 < state.entries.length
+                ? timeDiff(
+                    entry.timestamp,
+                    state.entries[i + 1].timestamp)
+                : null;
+        }
     }
 
     saveEntries(entries) {
