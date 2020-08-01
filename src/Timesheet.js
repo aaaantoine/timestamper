@@ -9,7 +9,7 @@ const timeDiff = (timestampA, timestampB) =>
     timestampB.getSortable() - timestampA.getSortable();
 
 const formatTimespan = (timespan) =>
-    (timespan / 1000 / 60 / 60).toFixed(2) + "h";
+        (timespan / 1000 / 60 / 60).toFixed(2) + "h";
 
 export default class Timesheet extends React.Component {
     constructor(props) {
@@ -34,9 +34,11 @@ export default class Timesheet extends React.Component {
             );
         const timeElapsedText = (entry, index) =>
             index < this.state.entries.length - 1
-                ? formatTimespan(timeDiff(
-                    entry.timestamp,
-                    this.state.entries[index + 1].timestamp))
+                ? "("
+                    + formatTimespan(timeDiff(
+                        entry.timestamp,
+                        this.state.entries[index + 1].timestamp))
+                    + ")"
                 : "";
         const dateHeader = (entry, index, className) =>
             index === 0 || !this.state.entries[index - 1].timestamp.date.isSame(entry.timestamp.date)
