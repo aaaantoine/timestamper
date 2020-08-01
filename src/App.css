@@ -11,3 +11,8 @@
 .break-entry, .break-entry input {
   background-color: #dddddd;
 }
+
+.elapsed-time {
+  font-size: 75%;
+  color: #666666;
+}
