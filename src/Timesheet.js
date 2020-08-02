@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileAlt, faPlay, faPlus, faPause, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faPlus, faPause, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import Timestamp from './dataTypes/Timestamp.js';
@@ -124,14 +124,9 @@ export default class Timesheet extends React.Component {
         );
         const hashtagTotalMapping = (tag) =>
             totalHours(unHash(tag), this.state.tags[tag]);
-        const list = this.state.entries.map(
-            this.state.isCopyMode ? copyModeMapping : editModeMapping);
-        const copyModeClass = "btn ml-1 " + (this.state.isCopyMode
-             ? "btn-secondary"
-             : "btn-outline-secondary");
-        return (
-            <div class="container">
-                {list}
+        const editModeView = () => (
+            <React.Fragment>
+                {this.state.entries.map(editModeMapping)}
                 <div class="mt-2">
                     <button class="btn btn-primary" type='button'
                         title="Add an entry."
@@ -145,32 +140,44 @@ export default class Timesheet extends React.Component {
                         disabled={this.state.isCopyMode}>
                         <FontAwesomeIcon icon={faPause} />
                     </button>
-                    <button class={copyModeClass} type="button"
-                        title="Toggle Copy/Report Mode"
-                        onClick={() => this.toggleCopyMode()}>
-                        <FontAwesomeIcon icon={faFileAlt} />
-                    </button>
                     <button class="btn btn-danger ml-1" type="button"
                         title="Clear all entries."
                         onClick={() => this.clearAllEntries()}>
                         <FontAwesomeIcon icon={faTrashAlt} />
                     </button>
                 </div>
-                <div class="mb-2">
-                    {header("Totals")}
-                    <p>
-                        Use #Hashtagged-Category-Names to categorize time entries.
-                        The last entry doesn't count toward totals.
-                    </p>
-                    <div class="row">
-                        {totalHours(
-                            "Total Uptime",
-                            this.state.entries
-                                .filter(x => !x.isBreak)
-                                .map(x => x.elapsed)
-                                .reduce((a, b) => (a || 0) + (b || 0), 0))}
-                        {Object.keys(this.state.tags || []).sort().map(hashtagTotalMapping)}
-                    </div>
+            </React.Fragment>
+        );
+        const copyModeView = () => this.state.entries.map(copyModeMapping);
+        const list = this.state.isCopyMode ? copyModeView() : editModeView();
+        return (
+            <div class="container">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <button type="button"
+                            class={`nav-link ${!this.state.isCopyMode ? "active" : ""}`}
+                            onClick={() => this.updateCopyMode(false)}>Entry</button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button"
+                            class={`nav-link ${this.state.isCopyMode ? "active" : ""}`}
+                            onClick={() => this.updateCopyMode(true)}>Report</button>
+                    </li>
+                </ul>
+                {list}
+                {header("Totals", this.state.isCopyMode ? "row" : "")}
+                {this.state.isCopyMode ? "" : (<p>
+                    Use #Hashtagged-Category-Names to categorize time entries.
+                    The last entry doesn't count toward totals.
+                </p>)}
+                <div class="row">
+                    {totalHours(
+                        "Total Uptime",
+                        this.state.entries
+                            .filter(x => !x.isBreak)
+                            .map(x => x.elapsed)
+                            .reduce((a, b) => (a || 0) + (b || 0), 0))}
+                    {Object.keys(this.state.tags || []).sort().map(hashtagTotalMapping)}
                 </div>
             </div>
         );
@@ -269,8 +276,9 @@ export default class Timesheet extends React.Component {
         this.setStateWrapper({entries});
     }
 
-    toggleCopyMode() {
-        let isCopyMode = !this.state.isCopyMode;
+    toggleCopyMode = () => this.updateCopyMode(!this.state.isCopyMode);
+    updateCopyMode(value) {
+        let isCopyMode = value;
         this.setState({isCopyMode});
     }
 
