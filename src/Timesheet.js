@@ -36,13 +36,16 @@ export default class Timesheet extends React.Component {
             entry.elapsed
                 ? "(" + formatTimespan(entry.elapsed) + ")"
                 : "";
+        const header = (text, className) => (
+            <div class={"border-bottom mt-4 mb-2 " + className}>
+                <small>{text}</small>
+            </div>
+        );
         const dateHeader = (entry, index, className) =>
             index === 0 || !this.state.entries[index - 1].timestamp.date.isSame(entry.timestamp.date)
-                ? (
-                <div class={"border-bottom mt-4 mb-2 " + className}>
-                    <small>{entry.timestamp.date.format("YYYY-MM-DD dddd")}</small>
-                </div>
-                )
+                ? header(
+                    entry.timestamp.date.format("YYYY-MM-DD dddd"),
+                    className)
                 : "";
         const editModeMapping = (entry, index) => (
             <React.Fragment>
@@ -127,6 +130,17 @@ export default class Timesheet extends React.Component {
                         onClick={() => this.clearAllEntries()}>
                         <FontAwesomeIcon icon={faTrashAlt} />
                     </button>
+                </div>
+                <div class="mb-2">
+                    {header("Totals")}
+                    <p>The last entry doesn't count toward totals.</p>
+                    <div class="col-sm-4">
+                        <strong>Total Uptime: </strong>
+                        <span>{formatTimespan(this.state.entries
+                            .filter(x => !x.isBreak)
+                            .map(x => x.elapsed)
+                            .reduce((a, b) => (a || 0) + (b || 0), 0))}</span>
+                    </div>
                 </div>
             </div>
         );
