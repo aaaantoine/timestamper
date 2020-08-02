@@ -18,6 +18,8 @@ const findHashtagEntries = entries =>
 
 const getHashtags = text => text.match(hashtagRegex);
 
+const unHash = text => text.replace(/#/, "").replace(/-/g, " ");
+
 export default class Timesheet extends React.Component {
     constructor(props) {
         super(props);
@@ -97,7 +99,7 @@ export default class Timesheet extends React.Component {
                     </span>
                     <span> </span>
                     <span class="col">
-                        {entry.summary}
+                        {entry.summary.replace(hashtagRegex, x => unHash(x))}
                     </span>
                     <span> </span>
                     <span class="col-xs-2 elapsed-time">
@@ -107,13 +109,13 @@ export default class Timesheet extends React.Component {
             </React.Fragment>
         );
         const totalHours = (label, value) => (
-            <div class="col-sm-4">
+            <div class="col-sm">
                 <strong>{label}: </strong>
                 <span>{formatTimespan(value)}</span>
             </div>
         );
         const hashtagTotalMapping = (tag) =>
-            totalHours(tag, this.state.tags[tag]);
+            totalHours(unHash(tag), this.state.tags[tag]);
         const list = this.state.entries.map(
             this.state.isCopyMode ? copyModeMapping : editModeMapping);
         const copyModeClass = "btn ml-1 " + (this.state.isCopyMode
@@ -149,16 +151,18 @@ export default class Timesheet extends React.Component {
                 <div class="mb-2">
                     {header("Totals")}
                     <p>
-                        Use #hashtags to categorize time entries.
+                        Use #Hashtagged-Category-Names to categorize time entries.
                         The last entry doesn't count toward totals.
                     </p>
-                    {totalHours(
-                        "Total Uptime",
-                        this.state.entries
-                            .filter(x => !x.isBreak)
-                            .map(x => x.elapsed)
-                            .reduce((a, b) => (a || 0) + (b || 0), 0))}
-                    {Object.keys(this.state.tags || []).map(hashtagTotalMapping)}
+                    <div class="row">
+                        {totalHours(
+                            "Total Uptime",
+                            this.state.entries
+                                .filter(x => !x.isBreak)
+                                .map(x => x.elapsed)
+                                .reduce((a, b) => (a || 0) + (b || 0), 0))}
+                        {Object.keys(this.state.tags || []).map(hashtagTotalMapping)}
+                    </div>
                 </div>
             </div>
         );
