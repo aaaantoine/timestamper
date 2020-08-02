@@ -4,21 +4,13 @@ import { faPlay, faPlus, faPause, faTrashAlt } from '@fortawesome/free-solid-svg
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import Timestamp from './dataTypes/Timestamp.js';
+import { hashtagRegex, findHashtagEntries, getHashtags, unHash } from './utils/hashtagging.js';
 
 const timeDiff = (timestampA, timestampB) =>
     timestampB.getSortable() - timestampA.getSortable();
 
 const formatTimespan = (timespan) =>
         (timespan / 1000 / 60 / 60).toFixed(2) + "h";
-
-const hashtagRegex = /#[\w-]+/g;
-
-const findHashtagEntries = entries => 
-    entries.filter(x => x.summary.search(hashtagRegex) >= 0);
-
-const getHashtags = text => text.match(hashtagRegex);
-
-const unHash = text => text.replace(/#/, "").replace(/-/g, " ");
 
 export default class Timesheet extends React.Component {
     constructor(props) {
