@@ -11,6 +11,13 @@ const timeDiff = (timestampA, timestampB) =>
 const formatTimespan = (timespan) =>
         (timespan / 1000 / 60 / 60).toFixed(2) + "h";
 
+const hashtagRegex = /#[\w-]+/g;
+
+const findHashtagEntries = entries => 
+    entries.filter(x => x.summary.search(hashtagRegex) >= 0);
+
+const getHashtags = text => text.match(hashtagRegex);
+
 export default class Timesheet extends React.Component {
     constructor(props) {
         super(props);
@@ -99,6 +106,14 @@ export default class Timesheet extends React.Component {
                 </div>
             </React.Fragment>
         );
+        const totalHours = (label, value) => (
+            <div class="col-sm-4">
+                <strong>{label}: </strong>
+                <span>{formatTimespan(value)}</span>
+            </div>
+        );
+        const hashtagTotalMapping = (tag) =>
+            totalHours(tag, this.state.tags[tag]);
         const list = this.state.entries.map(
             this.state.isCopyMode ? copyModeMapping : editModeMapping);
         const copyModeClass = "btn ml-1 " + (this.state.isCopyMode
@@ -133,14 +148,17 @@ export default class Timesheet extends React.Component {
                 </div>
                 <div class="mb-2">
                     {header("Totals")}
-                    <p>The last entry doesn't count toward totals.</p>
-                    <div class="col-sm-4">
-                        <strong>Total Uptime: </strong>
-                        <span>{formatTimespan(this.state.entries
+                    <p>
+                        Use #hashtags to categorize time entries.
+                        The last entry doesn't count toward totals.
+                    </p>
+                    {totalHours(
+                        "Total Uptime",
+                        this.state.entries
                             .filter(x => !x.isBreak)
                             .map(x => x.elapsed)
-                            .reduce((a, b) => (a || 0) + (b || 0), 0))}</span>
-                    </div>
+                            .reduce((a, b) => (a || 0) + (b || 0), 0))}
+                    {Object.keys(this.state.tags || []).map(hashtagTotalMapping)}
                 </div>
             </div>
         );
@@ -278,6 +296,18 @@ export default class Timesheet extends React.Component {
                     state.entries[i + 1].timestamp)
                 : null;
         }
+
+        // regenerate tag entries
+        state.tags = [];
+        const taggedEntries = findHashtagEntries(state.entries);
+        taggedEntries.forEach(entry => {
+            var tags = getHashtags(entry.summary)
+                // distinct tags
+                .filter((value, index, self) => self.indexOf(value) === index);
+            tags.forEach(tag => {
+                state.tags[tag] = (state.tags[tag] || 0) + entry.elapsed;
+            });
+        });
     }
 
     saveEntries(entries) {
