@@ -3,15 +3,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPlus, faPause, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+
 import { header, dateHeader } from './components/header.js';
+import Report from './components/Report.js';
+
 import Timestamp from './dataTypes/Timestamp.js';
-import { hashtagRegex, findHashtagEntries, getHashtags, unHash } from './utils/hashtagging.js';
+
+import { formatTimespan } from './utils/formatting.js';
+import { findHashtagEntries, getHashtags, unHash } from './utils/hashtagging.js';
 
 const timeDiff = (timestampA, timestampB) =>
     timestampB.getSortable() - timestampA.getSortable();
-
-const formatTimespan = (timespan) =>
-        (timespan / 1000 / 60 / 60).toFixed(2) + "h";
 
 export default class Timesheet extends React.Component {
     constructor(props) {
@@ -34,10 +36,6 @@ export default class Timesheet extends React.Component {
                     <FontAwesomeIcon icon={faPlay} />
                 </button>
             );
-        const timeElapsedText = (entry, index) =>
-            entry.elapsed
-                ? "(" + formatTimespan(entry.elapsed) + ")"
-                : "";
         const editModeMapping = (entry, index) => (
             <React.Fragment>
                 {dateHeader(this.state.entries, index)}
@@ -69,32 +67,6 @@ export default class Timesheet extends React.Component {
                                 <FontAwesomeIcon icon={faTrashAlt} />
                         </button>
                     </div>
-                </div>
-            </React.Fragment>
-        );
-        const copyModeSummary = summary =>
-            summary
-                .replace(hashtagRegex, x => `|${x}|`)
-                .split("|")
-                .map(x =>
-                    x.match(hashtagRegex)
-                        ? (<strong>{unHash(x)}</strong>)
-                        : (<React.Fragment>{x}</React.Fragment>));
-        const copyModeMapping = (entry, index) => (
-            <React.Fragment>
-                {dateHeader(this.state.entries, index, "row")}    
-                <div class={"row p-1" + (entry.isBreak ? " break-entry" : "")}>
-                    <span class="col-xs-1">
-                        {entry.timestamp.renderTime({includeColon: true})}
-                    </span>
-                    <span> </span>
-                    <span class="col">
-                        {copyModeSummary(entry.summary)}
-                    </span>
-                    <span> </span>
-                    <span class="col-xs-2 elapsed-time">
-                        {timeElapsedText(entry, index)}
-                    </span>
                 </div>
             </React.Fragment>
         );
@@ -130,7 +102,7 @@ export default class Timesheet extends React.Component {
                 </div>
             </React.Fragment>
         );
-        const copyModeView = () => this.state.entries.map(copyModeMapping);
+        const copyModeView = () => (<Report entries={this.state.entries} />);
         const list = this.state.isCopyMode ? copyModeView() : editModeView();
         return (
             <div class="container">
