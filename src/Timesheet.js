@@ -90,6 +90,14 @@ export default class Timesheet extends React.Component {
                 </div>
             </React.Fragment>
         );
+        const copyModeSummary = summary =>
+            summary
+                .replace(hashtagRegex, x => `|${x}|`)
+                .split("|")
+                .map(x =>
+                    x.match(hashtagRegex)
+                        ? (<strong>{unHash(x)}</strong>)
+                        : (<React.Fragment>{x}</React.Fragment>));
         const copyModeMapping = (entry, index) => (
             <React.Fragment>
                 {dateHeader(entry, index, "row")}    
@@ -99,7 +107,7 @@ export default class Timesheet extends React.Component {
                     </span>
                     <span> </span>
                     <span class="col">
-                        {entry.summary.replace(hashtagRegex, x => unHash(x))}
+                        {copyModeSummary(entry.summary)}
                     </span>
                     <span> </span>
                     <span class="col-xs-2 elapsed-time">
