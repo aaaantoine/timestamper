@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPlus, faPause, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import { header, dateHeader } from './components/header.js';
 import Timestamp from './dataTypes/Timestamp.js';
 import { hashtagRegex, findHashtagEntries, getHashtags, unHash } from './utils/hashtagging.js';
 
@@ -37,20 +38,9 @@ export default class Timesheet extends React.Component {
             entry.elapsed
                 ? "(" + formatTimespan(entry.elapsed) + ")"
                 : "";
-        const header = (text, className) => (
-            <div class={"border-bottom mt-4 mb-2 " + className}>
-                <small>{text}</small>
-            </div>
-        );
-        const dateHeader = (entry, index, className) =>
-            index === 0 || !this.state.entries[index - 1].timestamp.date.isSame(entry.timestamp.date)
-                ? header(
-                    entry.timestamp.date.format("YYYY-MM-DD dddd"),
-                    className)
-                : "";
         const editModeMapping = (entry, index) => (
             <React.Fragment>
-                {dateHeader(entry, index)}
+                {dateHeader(this.state.entries, index)}
                 <div class={rowClass(entry)}>
                     <input type="text" class="form-control timestamp"
                         ref={entry.timestampRef}
@@ -92,7 +82,7 @@ export default class Timesheet extends React.Component {
                         : (<React.Fragment>{x}</React.Fragment>));
         const copyModeMapping = (entry, index) => (
             <React.Fragment>
-                {dateHeader(entry, index, "row")}    
+                {dateHeader(this.state.entries, index, "row")}    
                 <div class={"row p-1" + (entry.isBreak ? " break-entry" : "")}>
                     <span class="col-xs-1">
                         {entry.timestamp.renderTime({includeColon: true})}
