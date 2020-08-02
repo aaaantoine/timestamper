@@ -169,7 +169,7 @@ export default class Timesheet extends React.Component {
                                 .filter(x => !x.isBreak)
                                 .map(x => x.elapsed)
                                 .reduce((a, b) => (a || 0) + (b || 0), 0))}
-                        {Object.keys(this.state.tags || []).map(hashtagTotalMapping)}
+                        {Object.keys(this.state.tags || []).sort().map(hashtagTotalMapping)}
                     </div>
                 </div>
             </div>
