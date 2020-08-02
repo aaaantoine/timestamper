@@ -6,11 +6,11 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 
 import { header, dateHeader } from './components/header.js';
 import Report from './components/Report.js';
+import Totals from './components/Totals.js';
 
 import Timestamp from './dataTypes/Timestamp.js';
 
-import { formatTimespan } from './utils/formatting.js';
-import { findHashtagEntries, getHashtags, unHash } from './utils/hashtagging.js';
+import { findHashtagEntries, getHashtags } from './utils/hashtagging.js';
 
 const timeDiff = (timestampA, timestampB) =>
     timestampB.getSortable() - timestampA.getSortable();
@@ -70,14 +70,6 @@ export default class Timesheet extends React.Component {
                 </div>
             </React.Fragment>
         );
-        const totalHours = (label, value) => (
-            <div class="col-sm">
-                <strong>{label}: </strong>
-                <span>{formatTimespan(value)}</span>
-            </div>
-        );
-        const hashtagTotalMapping = (tag) =>
-            totalHours(unHash(tag), this.state.tags[tag]);
         const editModeView = () => (
             <React.Fragment>
                 {this.state.entries.map(editModeMapping)}
@@ -120,19 +112,10 @@ export default class Timesheet extends React.Component {
                 </ul>
                 {list}
                 {header("Totals", this.state.isCopyMode ? "row" : "")}
-                {this.state.isCopyMode ? "" : (<p>
-                    Use #Hashtagged-Category-Names to categorize time entries.
-                    The last entry doesn't count toward totals.
-                </p>)}
-                <div class="row">
-                    {totalHours(
-                        "Total Uptime",
-                        this.state.entries
-                            .filter(x => !x.isBreak)
-                            .map(x => x.elapsed)
-                            .reduce((a, b) => (a || 0) + (b || 0), 0))}
-                    {Object.keys(this.state.tags || []).sort().map(hashtagTotalMapping)}
-                </div>
+                <Totals
+                    entries={this.state.entries}
+                    tags={this.state.tags}
+                    displayHelp={!this.state.isCopyMode} />
             </div>
         );
     }
