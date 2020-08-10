@@ -40,7 +40,7 @@ export default class Timesheet extends React.Component {
             <React.Fragment>
                 {dateHeader(this.state.entries, index)}
                 <div class={rowClass(entry)}>
-                    <input type="text" class="form-control timestamp"
+                    <input type="number" class="form-control timestamp"
                         ref={entry.timestampRef}
                         autoFocus
                         maxlength="4"
