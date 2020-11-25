@@ -123,10 +123,12 @@ export default class Timesheet extends React.Component {
     arrowKeyFocus(index, event, field) {
         let newIndex = index;
         if (event.keyCode === 38) { // up
+            event.preventDefault();
             if (index <= 0) return;
             newIndex -= 1;
         }
         else if (event.keyCode === 40 || event.keyCode === 13) { // down or enter
+            event.preventDefault();
             if (index >= this.state.entries.length - 1) {
                 // only add if the last entry has text
                 if (this.state.entries[index].summary.trim() !== "") {
