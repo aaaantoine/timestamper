@@ -57,6 +57,15 @@ export default class Timesheet extends React.Component {
                     <div class="input-group-append">
                         {resumeButton(entry, index, index === this.state.entries.length - 1)}
                         <div class="dropdown-menu" aria-labelledby={`entryMenu${index}`}>
+                            <div class="form-group">
+                                <label>Entry Date</label>
+                                <input type="date" class="form-control"
+                                    value={entry.timestamp.renderDate()}
+                                    onChange={(event) => this.updateDate(index, event.target.value)}
+                                    onFocus={() => this.startTimeEntry(index)}
+                                    onBlur={() => this.completeTimeEntry(index)} />
+                            </div>
+                            <div class="dropdown-divider"></div>
                             <button class="dropdown-item text-secondary"
                                 onClick={e => this.updateIsBreak(index)}>
                                 <FontAwesomeIcon icon={faPause} />
@@ -160,6 +169,9 @@ export default class Timesheet extends React.Component {
     completeTimeEntry = (index) =>
         this.updateTimeProp(index, x => x.completeEntry());
     
+    updateDate = (index, value) =>
+        this.updateTimeProp(index, x => x.setDate(value));
+
     updateTime = (index, value) =>
         this.updateTimeProp(index, x => x.setTime(value));
     
