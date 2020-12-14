@@ -8,8 +8,8 @@ export const header = (text, className) => (
 );
 
 export const dateHeader = (entries, index, className) =>
-    index === 0 || !entries[index - 1].timestamp.date.isSame(entries[index].timestamp.date)
+    index === 0 || !entries[index - 1].timestamp.sortdate.isSame(entries[index].timestamp.sortdate)
         ? header(
-            entries[index].timestamp.date.format(dateFormatString),
+            entries[index].timestamp.sortdate.format(dateFormatString),
             className)
         : "";

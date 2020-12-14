@@ -1,5 +1,7 @@
 import moment from 'moment';
 
+import { dateFormatFieldString } from '../utils/formatting.js';
+
 const dateTo4DigitTime = value =>
     value.getHours() * 100 + value.getMinutes();
 const insertColon = (value) =>
@@ -11,23 +13,28 @@ const timeIsValid = value =>
     && parseInt(value) <= 2359
     && parseInt(value.slice(-2)) < 60;
 
+const getDateFromDateObj = (value) =>
+    moment(new Date(
+        value.getFullYear(),
+        value.getMonth(),
+        value.getDate()));
+
 export default class Timestamp {
     /**
      * @param {Date} timestamp 
      */
     constructor(timestamp) {
         if (timestamp instanceof Date) {
-            this.date = moment(new Date(
-                timestamp.getFullYear(),
-                timestamp.getMonth(),
-                timestamp.getDate()));
+            this.date = getDateFromDateObj(timestamp);
             this.time = dateTo4DigitTime(timestamp);
+            this.sortdate = this.date;
             this.sorttime = this.time;
             this.isMidEntry = false;
         }
         else {
             this.date = moment(new Date(timestamp.date));
             this.time = timestamp.time;
+            this.sortdate = this.date;
             this.sorttime = timestamp.sorttime;
             this.setIsMidEntry(false);
         }
@@ -37,6 +44,7 @@ export default class Timestamp {
         return {
             date: this.date,
             time: this.time,
+            sortdate: this.sortdate,
             sorttime: this.sorttime
         };
     }
@@ -45,11 +53,13 @@ export default class Timestamp {
         const timestring = pad(this.sorttime);
         const hours = parseInt(timestring.slice(0, 2));
         const minutes = parseInt(timestring.slice(2)) + (hours * 60);
-        return moment(this.date).add(minutes, 'm');
+        return moment(this.sortdate).add(minutes, 'm');
     }
 
     startEntry = () => this.setIsMidEntry(true);
     completeEntry = () => this.setIsMidEntry(false);
+
+    renderDate = () => this.date.format(dateFormatFieldString);
 
     renderTime = (options) => this.isMidEntry
         ? this.time.toString()
@@ -65,6 +75,21 @@ export default class Timestamp {
             } else {
                 this.time = this.sorttime;
             }
+            
+            if (this.date.isValid()) {
+                this.sortdate = this.date;
+            } else {
+                this.date = this.sortdate;    
+            }
+        }
+        return this;
+    }
+
+    setDate(value) {
+        if (value instanceof Date) {
+            this.date = getDateFromDateObj(value);
+        } else {
+            this.date = moment(value);
         }
         return this;
     }
