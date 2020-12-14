@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faPlus, faPause, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faPlay, faPlus, faPause, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
@@ -56,15 +56,25 @@ export default class Timesheet extends React.Component {
                         onKeyDown={(event) => this.arrowKeyFocus(index, event, "summary")} />
                     <div class="input-group-append">
                         {resumeButton(entry, index, index === this.state.entries.length - 1)}
-                        <button class={"btn " + (entry.isBreak ? "btn-secondary" : "btn-outline-secondary")} type="button"
-                            title="Toggle break."
-                            onClick={e => this.updateIsBreak(index)}>
+                        <div class="dropdown-menu" aria-labelledby={`entryMenu${index}`}>
+                            <button class="dropdown-item text-secondary"
+                                onClick={e => this.updateIsBreak(index)}>
                                 <FontAwesomeIcon icon={faPause} />
+                                <span class="ml-1">Toggle downtime</span>
                             </button>
-                        <button class="btn btn-outline-danger" type="button"
-                            title="Remove entry."
-                            onClick={(e) => this.removeEntry(index)}>
+                            <button class="dropdown-item text-danger"
+                                onClick={(e) => this.removeEntry(index)}>
                                 <FontAwesomeIcon icon={faTrashAlt} />
+                                <span class="ml-1">Remove entry</span>
+                            </button>
+                        </div>
+                        <button class="btn btn-outline-secondary" type="button"
+                            id={`entryMenu${index}`}
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            title="More options">
+                            <FontAwesomeIcon icon={faBars} />
                         </button>
                     </div>
                 </div>
