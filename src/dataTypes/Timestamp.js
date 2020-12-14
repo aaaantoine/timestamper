@@ -42,8 +42,8 @@ export default class Timestamp {
 
     toObject = () => {
         return {
-            date: this.date,
-            time: this.time,
+            date: this.sortdate,
+            time: this.sorttime,
             sortdate: this.sortdate,
             sorttime: this.sorttime
         };
