@@ -65,15 +65,15 @@ export default class Timesheet extends React.Component {
                                 <FontAwesomeIcon icon={faBars} />
                             </button>
                             <div class="dropdown-menu" aria-labelledby={`entryMenu${index}`}>
-                                <button class="dropdown-item"
+                                <button class="dropdown-item text-secondary"
                                     onClick={e => this.updateIsBreak(index)}>
                                     <FontAwesomeIcon icon={faPause} />
-                                    Toggle downtime
+                                    <span class="ml-1">Toggle downtime</span>
                                 </button>
-                                <button class="dropdown-item"
+                                <button class="dropdown-item text-danger"
                                     onClick={(e) => this.removeEntry(index)}>
                                     <FontAwesomeIcon icon={faTrashAlt} />
-                                    Remove entry
+                                    <span class="ml-1">Remove entry</span>
                                 </button>
                             </div>
                         </div>
