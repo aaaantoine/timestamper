@@ -34,7 +34,7 @@ export default class Timestamp {
         else {
             this.date = moment(new Date(timestamp.date));
             this.time = timestamp.time;
-            this.sortdate = this.date;
+            this.sortdate = moment(new Date(timestamp.sortdate));
             this.sorttime = timestamp.sorttime;
             this.setIsMidEntry(false);
         }
