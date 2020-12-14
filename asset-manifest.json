@@ -1,25 +1,25 @@
 {
   "files": {
     "main.css": "/timestamper/static/css/main.1e351d4e.chunk.css",
-    "main.js": "/timestamper/static/js/main.d41917b6.chunk.js",
-    "main.js.map": "/timestamper/static/js/main.d41917b6.chunk.js.map",
+    "main.js": "/timestamper/static/js/main.e3f729e6.chunk.js",
+    "main.js.map": "/timestamper/static/js/main.e3f729e6.chunk.js.map",
     "runtime-main.js": "/timestamper/static/js/runtime-main.569f3f89.js",
     "runtime-main.js.map": "/timestamper/static/js/runtime-main.569f3f89.js.map",
     "static/css/2.627926fe.chunk.css": "/timestamper/static/css/2.627926fe.chunk.css",
-    "static/js/2.5f935a86.chunk.js": "/timestamper/static/js/2.5f935a86.chunk.js",
-    "static/js/2.5f935a86.chunk.js.map": "/timestamper/static/js/2.5f935a86.chunk.js.map",
+    "static/js/2.9a20d101.chunk.js": "/timestamper/static/js/2.9a20d101.chunk.js",
+    "static/js/2.9a20d101.chunk.js.map": "/timestamper/static/js/2.9a20d101.chunk.js.map",
     "index.html": "/timestamper/index.html",
-    "precache-manifest.f72a0059a10126b37eb69cfd6e0bb4ce.js": "/timestamper/precache-manifest.f72a0059a10126b37eb69cfd6e0bb4ce.js",
+    "precache-manifest.da56f22be0da095f96a9869de236bc83.js": "/timestamper/precache-manifest.da56f22be0da095f96a9869de236bc83.js",
     "service-worker.js": "/timestamper/service-worker.js",
     "static/css/2.627926fe.chunk.css.map": "/timestamper/static/css/2.627926fe.chunk.css.map",
     "static/css/main.1e351d4e.chunk.css.map": "/timestamper/static/css/main.1e351d4e.chunk.css.map",
-    "static/js/2.5f935a86.chunk.js.LICENSE.txt": "/timestamper/static/js/2.5f935a86.chunk.js.LICENSE.txt"
+    "static/js/2.9a20d101.chunk.js.LICENSE.txt": "/timestamper/static/js/2.9a20d101.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.569f3f89.js",
     "static/css/2.627926fe.chunk.css",
-    "static/js/2.5f935a86.chunk.js",
+    "static/js/2.9a20d101.chunk.js",
     "static/css/main.1e351d4e.chunk.css",
-    "static/js/main.d41917b6.chunk.js"
+    "static/js/main.e3f729e6.chunk.js"
   ]
 }
