@@ -252,7 +252,7 @@ export default class Timesheet extends React.Component {
                     label: "Yes, Clear",
                     onClick: () => {
                         const entries = [];
-                        this.setState({entries});
+                        this.setStateWrapper({entries});
                     }
                 },
                 {
@@ -262,10 +262,16 @@ export default class Timesheet extends React.Component {
         });
     }
 
+    /**
+     * Updates React component state
+     * and performs other changes related to time entry updates.
+     * @param {*} state The state to pass along to
+     *                  `Component.setState()`.
+     */
     setStateWrapper(state) {
         this.calculateTimeElapsed(state);
         this.setState(state);
-        this.saveEntries(this.state.entries);
+        this.saveEntries(state.entries || this.state.entries);
     }
 
     calculateTimeElapsed(state) {
