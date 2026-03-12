@@ -262,6 +262,12 @@ export default class Timesheet extends React.Component {
         });
     }
 
+    /**
+     * Updates React component state
+     * and performs other changes related to time entry updates.
+     * @param {*} state The state to pass along to
+     *                  `Component.setState()`.
+     */
     setStateWrapper(state) {
         this.calculateTimeElapsed(state);
         this.setState(state);
