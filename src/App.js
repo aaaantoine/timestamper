@@ -1,8 +1,11 @@
 import React from 'react';
 import Timesheet from './Timesheet.js';
+import StorageService from './services/StorageService.js';
 import './App.css';
 
 function App() {
+  const storageService = new StorageService();
+  
   return (
     <div className="App">
       <nav class="navbar navbar-dark bg-dark">
@@ -18,7 +21,7 @@ function App() {
         </a>
       </nav>
       
-      <Timesheet />
+      <Timesheet storageService={storageService} />
     </div>
   );
 }

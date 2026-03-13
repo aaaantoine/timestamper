@@ -19,8 +19,9 @@ const timeDiff = (timestampA, timestampB) =>
 export default class Timesheet extends React.Component {
     constructor(props) {
         super(props);
+        this.storageService = props.storageService;
         this.state = {
-            entries: this.loadEntries(),
+            entries: this.storageService.loadEntries(),
             isCopyMode: false,
         };
     }
@@ -261,7 +262,7 @@ export default class Timesheet extends React.Component {
     setStateWrapper(state) {
         this.calculateTimeElapsed(state);
         this.setState(state);
-        this.saveEntries(state.entries || this.state.entries);
+        this.storageService.saveEntries(state.entries || this.state.entries);
     }
 
     calculateTimeElapsed(state) {
@@ -285,28 +286,5 @@ export default class Timesheet extends React.Component {
                 state.tags[tag] = (state.tags[tag] || 0) + entry.elapsed;
             });
         });
-    }
-
-    saveEntries(entries) {
-        const savedEntries = entries.map(entry => {
-            return {
-                timestamp: entry.timestamp.toObject(),
-                summary: entry.summary,
-                isBreak: entry.isBreak
-            };
-        });
-        localStorage.setItem("entries", JSON.stringify(savedEntries));
-    }
-
-    loadEntries() {
-        let entries = JSON.parse(localStorage.getItem("entries"));
-        if (entries) {
-            // re-cast timestamps according to class
-            for(let i = 0; i < entries.length; i++) {
-                entries[i].timestamp = new Timestamp(entries[i].timestamp);
-                entries[i] = new TimeEntry(entries[i]);
-            }
-        }
-        return entries || [];
     }
 }
