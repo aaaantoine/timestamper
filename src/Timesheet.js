@@ -8,6 +8,7 @@ import { header, dateHeader } from './components/header.js';
 import Report from './components/Report.js';
 import Totals from './components/Totals.js';
 
+import TimeEntry from './dataTypes/TimeEntry.js';
 import Timestamp from './dataTypes/Timestamp.js';
 
 import { findHashtagEntries, getHashtags } from './utils/hashtagging.js';
@@ -212,23 +213,12 @@ export default class Timesheet extends React.Component {
             text = '';
         }
         let entries = this.state.entries;
-        entries.push(this.createEntry({
+        entries.push(new TimeEntry({
             timestamp: new Timestamp(new Date()),
             summary: text,
             isBreak: !!isBreak
         }));
         this.setStateWrapper({entries});
-    }
-
-    createEntry(props) {
-        return {
-            timestamp: props.timestamp,
-            summary: props.summary,
-            isBreak: !!props.isBreak,
-
-            timestampRef: React.createRef(),
-            summaryRef: React.createRef()
-        };
     }
 
     removeEntry(index) {
@@ -314,7 +304,7 @@ export default class Timesheet extends React.Component {
             // re-cast timestamps according to class
             for(let i = 0; i < entries.length; i++) {
                 entries[i].timestamp = new Timestamp(entries[i].timestamp);
-                entries[i] = this.createEntry(entries[i]);
+                entries[i] = new TimeEntry(entries[i]);
             }
         }
         return entries || [];
