@@ -1,5 +1,5 @@
 import Timestamp from '../dataTypes/Timestamp.js'
-import TimeEntry from '../dataTypes/TimeEntry.js'
+import { TimeEntry } from '../dataTypes/TimeEntry.js'
 
 /**
  * Provides functions for saving and loading timestamp entries.

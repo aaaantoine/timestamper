@@ -8,7 +8,7 @@ import { header, dateHeader } from './components/header.js';
 import Report from './components/Report.js';
 import Totals from './components/Totals.js';
 
-import TimeEntry from './dataTypes/TimeEntry.js';
+import { TimeEntry } from './dataTypes/TimeEntry.js';
 import Timestamp from './dataTypes/Timestamp.js';
 
 import { findHashtagEntries, getHashtags } from './utils/hashtagging.js';
