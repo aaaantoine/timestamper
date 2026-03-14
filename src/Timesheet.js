@@ -94,20 +94,20 @@ export default class Timesheet extends React.Component {
         const editModeView = () => (
             <React.Fragment>
                 {this.state.entries.map(editModeMapping)}
-                <div class="mt-2">
-                    <button class="btn btn-primary" type='button'
+                <div className="mt-2">
+                    <button className="btn btn-primary" type='button'
                         title="Add an entry."
                         onClick={() => this.addEntry()}
                         disabled={this.state.isCopyMode}>
                         <FontAwesomeIcon icon={faPlus} />
                     </button> 
-                    <button class="btn btn-secondary ml-1" type="button"
+                    <button className="btn btn-secondary ml-1" type="button"
                         title="Take a break."
                         onClick={(e) => this.addEntry("Break", true)}
                         disabled={this.state.isCopyMode}>
                         <FontAwesomeIcon icon={faPause} />
                     </button>
-                    <button class="btn btn-danger ml-1" type="button"
+                    <button className="btn btn-danger ml-1" type="button"
                         title="Clear all entries."
                         onClick={() => this.clearAllEntries()}>
                         <FontAwesomeIcon icon={faTrashAlt} />
@@ -118,16 +118,16 @@ export default class Timesheet extends React.Component {
         const copyModeView = () => (<Report entries={this.state.entries} />);
         const list = this.state.isCopyMode ? copyModeView() : editModeView();
         return (
-            <div class="container">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
+            <div className="container">
+                <ul className="nav nav-tabs">
+                    <li className="nav-item">
                         <button type="button"
-                            class={`nav-link ${!this.state.isCopyMode ? "active" : ""}`}
+                            className={`nav-link ${!this.state.isCopyMode ? "active" : ""}`}
                             onClick={() => this.updateCopyMode(false)}>Entry</button>
                     </li>
-                    <li class="nav-item">
+                    <li className="nav-item">
                         <button type="button"
-                            class={`nav-link ${this.state.isCopyMode ? "active" : ""}`}
+                            className={`nav-link ${this.state.isCopyMode ? "active" : ""}`}
                             onClick={() => this.updateCopyMode(true)}>Report</button>
                     </li>
                 </ul>
