@@ -10,6 +10,7 @@ test('isTimeEntry: object that looks like a duck returns true', () => {
     const val = {
         timestamp: new Date(),
         summary: "text",
+        elapsed: null,
         isBreak: false,
         timestampRef: null,
         summaryRef: null

@@ -5,6 +5,10 @@ import { TimeEntry } from '../dataTypes/TimeEntry.js'
  * Provides functions for saving and loading timestamp entries.
  */
 export default class StorageService {
+    /**
+     * Saves time entries to storage.
+     * @param {TimeEntry[]} entries 
+     */
     saveEntries(entries) {
         const savedEntries = entries.map(entry => {
             return {
@@ -16,6 +20,10 @@ export default class StorageService {
         localStorage.setItem("entries", JSON.stringify(savedEntries));
     }
 
+    /**
+     * Loads time entries from storage.
+     * @returns {TimeEntry[]}
+     */
     loadEntries() {
         let entries = JSON.parse(localStorage.getItem("entries"));
         if (entries) {
