@@ -8,25 +8,64 @@ import { header, dateHeader } from './components/header.js';
 import Report from './components/Report.js';
 import Totals from './components/Totals.js';
 
+import { TimeEntry } from './dataTypes/TimeEntry.js';
 import Timestamp from './dataTypes/Timestamp.js';
 
 import { findHashtagEntries, getHashtags } from './utils/hashtagging.js';
 
+// For JSDoc.
+// eslint-disable-next-line
+import StorageService from './services/StorageService.js';
+
+/**
+ * Gets the difference in time between two timestamps.
+ * @param {Timestamp} timestampA 
+ * @param {Timestamp} timestampB
+ */
 const timeDiff = (timestampA, timestampB) =>
     timestampB.getSortable() - timestampA.getSortable();
 
 export default class Timesheet extends React.Component {
+    /**
+     * @param {{storageService: StorageService}} props 
+     */
     constructor(props) {
         super(props);
+        /**
+         * Dependency for saving and loading timestamp entries.
+         * @type {StorageService}
+         */
+        this.storageService = props.storageService;
+
+        /**
+         * The current state of the timesheet.
+         * @type {{entries: TimeEntry[], isCopyMode: boolean}}
+         */
         this.state = {
-            entries: this.loadEntries(),
+            /**
+             * Time entries tracked throughout the use of the timesheet.
+             */
+            entries: this.storageService.loadEntries(),
+
+            /**
+             * Indictes whether copy mode is active.
+             */
             isCopyMode: false,
         };
     }
     render() {
+        /**
+         * @param {TimeEntry} entry
+         */
         const rowClass = entry =>
             "input-group"
             + (entry.isBreak ? " break-entry" : "");
+        /**
+         * 
+         * @param {TimeEntry} entry 
+         * @param {number} index 
+         * @param {boolean} isLast
+         */
         const resumeButton = (entry, index, isLast) => isLast
             ? ""
             : (
@@ -36,6 +75,10 @@ export default class Timesheet extends React.Component {
                     <FontAwesomeIcon icon={faPlay} />
                 </button>
             );
+        /**
+         * @param {TimeEntry} entry
+         * @param {number} index
+         */
         const editModeMapping = (entry, index) => (
             <React.Fragment>
                 {dateHeader(this.state.entries, index)}
@@ -92,20 +135,20 @@ export default class Timesheet extends React.Component {
         const editModeView = () => (
             <React.Fragment>
                 {this.state.entries.map(editModeMapping)}
-                <div class="mt-2">
-                    <button class="btn btn-primary" type='button'
+                <div className="mt-2">
+                    <button className="btn btn-primary" type='button'
                         title="Add an entry."
                         onClick={() => this.addEntry()}
                         disabled={this.state.isCopyMode}>
                         <FontAwesomeIcon icon={faPlus} />
                     </button> 
-                    <button class="btn btn-secondary ml-1" type="button"
+                    <button className="btn btn-secondary ml-1" type="button"
                         title="Take a break."
                         onClick={(e) => this.addEntry("Break", true)}
                         disabled={this.state.isCopyMode}>
                         <FontAwesomeIcon icon={faPause} />
                     </button>
-                    <button class="btn btn-danger ml-1" type="button"
+                    <button className="btn btn-danger ml-1" type="button"
                         title="Clear all entries."
                         onClick={() => this.clearAllEntries()}>
                         <FontAwesomeIcon icon={faTrashAlt} />
@@ -116,16 +159,16 @@ export default class Timesheet extends React.Component {
         const copyModeView = () => (<Report entries={this.state.entries} />);
         const list = this.state.isCopyMode ? copyModeView() : editModeView();
         return (
-            <div class="container">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
+            <div className="container">
+                <ul className="nav nav-tabs">
+                    <li className="nav-item">
                         <button type="button"
-                            class={`nav-link ${!this.state.isCopyMode ? "active" : ""}`}
+                            className={`nav-link ${!this.state.isCopyMode ? "active" : ""}`}
                             onClick={() => this.updateCopyMode(false)}>Entry</button>
                     </li>
-                    <li class="nav-item">
+                    <li className="nav-item">
                         <button type="button"
-                            class={`nav-link ${this.state.isCopyMode ? "active" : ""}`}
+                            className={`nav-link ${this.state.isCopyMode ? "active" : ""}`}
                             onClick={() => this.updateCopyMode(true)}>Report</button>
                     </li>
                 </ul>
@@ -139,6 +182,12 @@ export default class Timesheet extends React.Component {
         );
     }
     
+    /**
+     * Changes field focus based on the keycode in the event.
+     * @param {number} index The current time entry index.
+     * @param {KeyboardEvent} event The keyboard event to evaluate.
+     * @param {string} field The name of the field referenced.
+     */
     arrowKeyFocus(index, event, field) {
         let newIndex = index;
         if (event.keyCode === 38) { // up
@@ -163,35 +212,81 @@ export default class Timesheet extends React.Component {
         this.state.entries[newIndex][field + "Ref"].current.focus();
     }
 
+    /**
+     * Updates the given time entry's timestamp to indicate that data entry has
+     * started.
+     * @param {number} index - The index of the time entry to update. 
+     */
     startTimeEntry = (index) =>
         this.updateTimeProp(index, x => x.startEntry());
     
+    /**
+     * Updates the given time entry's timestamp to indicate that data entry has
+     * stopped.
+     * @param {number} index - The index of the time entry to update. 
+     */
     completeTimeEntry = (index) =>
         this.updateTimeProp(index, x => x.completeEntry());
     
+    /**
+     * Updates the given time entry's timestamp with the given date.
+     * @param {number} index - The index of the time entry to update. 
+     * @param {moment.MomentInput} value - The date value to apply to the timestamp.
+     */
     updateDate = (index, value) =>
         this.updateTimeProp(index, x => x.setDate(value));
 
+    /**
+     * Updates the given time entry's timestamp with the given time.
+     * @param {number} index - The index of the time entry to update. 
+     * @param {number} value - The time value to apply to the timestamp.
+     */
     updateTime = (index, value) =>
         this.updateTimeProp(index, x => x.setTime(value));
     
+    /**
+     * Sets the given time entry's timestamp according to the given function.
+     * @param {number} index - The index of the time entry to update.
+     * @param {function(Timestamp): Timestamp} func - The function process the
+     * current timestamp with.
+     */
     updateTimeProp = (index, func) =>
         this.updateEntry(
             index,
             "timestamp",
              x => func(x.timestamp));
 
+    /**
+     * Sets the given time entry's summary to the given value.
+     * @param {number} index - The index of the time entry to update.
+     * @param {string} value - The value to set.
+     */
     updateSummary = (index, value) =>
         this.updateEntry(index, "summary", value);
     
+    /**
+     * Toggles the given time entry's `isBreak` flag.
+     * @param {number} index - The index of the time entry to update.
+     */
     updateIsBreak = (index) =>
         this.updateEntry(index, "isBreak", x => !x.isBreak);
 
+    /**
+     * Update a field on a time entry.
+     * @param {number} index - The index of the time entry to update.
+     * @param {string} field - The name of the time entry field to update.
+     * @param {((function(TimeEntry): *)|string)} valueFunc - Either a literal
+     * value to set, or a function to retrieve a value from the given time entry.
+     */
     updateEntry(index, field, valueFunc) {
         if (typeof(valueFunc) !== "function") {
             const value = valueFunc;
             valueFunc = x => value;
         }
+
+        /**
+         * @type {TimeEntry[]}
+         */
         let entries = this.state.entries;
         entries[index][field] = valueFunc(entries[index]);
         entries.sort((a, b) =>
@@ -199,6 +294,11 @@ export default class Timesheet extends React.Component {
         this.setStateWrapper({entries});
     }
 
+    /**
+     * Creates a new time entry from the entry at the given index, meant to
+     * indicate that the new time entry resumes the task of the given entry.
+     * @param {number} index 
+     */
     resumeEntry(index) {
         const resumeText = "Resume ";
         var sourceEntry = this.state.entries[index];
@@ -207,12 +307,19 @@ export default class Timesheet extends React.Component {
         this.addEntry(text, sourceEntry.isBreak);
     }
 
+    /**
+     * Adds a new time entry to the timesheet with the given details,
+     * timestamped to the current minute.
+     * @param {string} text - The summary to apply to the time entry.
+     * @param {boolean} isBreak - A value indicating whether this entry is part
+     * of a break.
+     */
     addEntry(text, isBreak) {
         if (!text) {
             text = '';
         }
         let entries = this.state.entries;
-        entries.push(this.createEntry({
+        entries.push(new TimeEntry({
             timestamp: new Timestamp(new Date()),
             summary: text,
             isBreak: !!isBreak
@@ -220,17 +327,10 @@ export default class Timesheet extends React.Component {
         this.setStateWrapper({entries});
     }
 
-    createEntry(props) {
-        return {
-            timestamp: props.timestamp,
-            summary: props.summary,
-            isBreak: !!props.isBreak,
-
-            timestampRef: React.createRef(),
-            summaryRef: React.createRef()
-        };
-    }
-
+    /**
+     * Removes the time entry at the given index.
+     * @param {number} index 
+     */
     removeEntry(index) {
         let entries = this.state.entries;
         entries.splice(index, 1);
@@ -238,11 +338,21 @@ export default class Timesheet extends React.Component {
     }
 
     toggleCopyMode = () => this.updateCopyMode(!this.state.isCopyMode);
+
+    /**
+     * Sets copy mode on the timesheet.
+     * @param {boolean} value 
+     */
     updateCopyMode(value) {
         let isCopyMode = value;
         this.setState({isCopyMode});
     }
 
+    /**
+     * Opens a dialog confirming whether the user wants to clear all entries
+     * from the timesheet.
+     * If the user confirms, the entries state will be set to an empty array.
+     */
     clearAllEntries() {
         confirmAlert({
             title: "Clear all entries",
@@ -271,9 +381,14 @@ export default class Timesheet extends React.Component {
     setStateWrapper(state) {
         this.calculateTimeElapsed(state);
         this.setState(state);
-        this.saveEntries(state.entries || this.state.entries);
+        this.storageService.saveEntries(state.entries || this.state.entries);
     }
 
+    /**
+     * Sets elapsed times on each time entry based on whether another time entry
+     * follows. Updates tags and their totals as well.
+     * @param {{ entries: TimeEntry[]}} state The component state, containing time entries and tags.
+     */
     calculateTimeElapsed(state) {
         for (let i = 0; i < state.entries.length; i++) {
             const entry = state.entries[i];
@@ -295,28 +410,5 @@ export default class Timesheet extends React.Component {
                 state.tags[tag] = (state.tags[tag] || 0) + entry.elapsed;
             });
         });
-    }
-
-    saveEntries(entries) {
-        const savedEntries = entries.map(entry => {
-            return {
-                timestamp: entry.timestamp.toObject(),
-                summary: entry.summary,
-                isBreak: entry.isBreak
-            };
-        });
-        localStorage.setItem("entries", JSON.stringify(savedEntries));
-    }
-
-    loadEntries() {
-        let entries = JSON.parse(localStorage.getItem("entries"));
-        if (entries) {
-            // re-cast timestamps according to class
-            for(let i = 0; i < entries.length; i++) {
-                entries[i].timestamp = new Timestamp(entries[i].timestamp);
-                entries[i] = this.createEntry(entries[i]);
-            }
-        }
-        return entries || [];
     }
 }

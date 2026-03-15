@@ -4,7 +4,7 @@ import { formatTimespan } from '../utils/formatting.js';
 import { unHash } from '../utils/hashtagging.js';
 
 const totalHours = (label, value) => (
-    <div class="col-sm">
+    <div className="col-sm">
         <strong>{label}: </strong>
         <span>{formatTimespan(value)}</span>
     </div>
@@ -23,7 +23,7 @@ export default class Totals extends React.Component {
                         The last entry doesn't count toward totals.
                     </p>)
                     : ""}
-                <div class="row">
+                <div className="row">
                     {totalHours(
                         "Total Uptime",
                         this.props.entries
